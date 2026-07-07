@@ -1,0 +1,114 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - "codex/**"
+      - "codex-*"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    name: Android and shared tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+        working-directory: kotlin
+
+      - name: Test renderer and assemble Android app
+        run: ./gradlew :renderer:testDebugUnitTest :androidApp:assembleDebug --stacktrace
+        working-directory: kotlin
+
+  ios:
+    name: iOS simulator build
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+        working-directory: kotlin
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Fetch MetalANGLE framework
+        run: |
+          # MetalANGLE is gitignored — fetch the prebuilt framework from GitHub releases.
+          VERSION="gles3-0.0.8"
+          BASE="https://github.com/kakashidinho/metalangle/releases/download/${VERSION}"
+          mkdir -p third_party/metalangle/ios-sim third_party/metalangle/ios-device
+          curl -fSL -o /tmp/ma_sim.zip "${BASE}/MetalANGLE.framework.ios.simulator.zip"
+          curl -fSL -o /tmp/ma_dev.zip "${BASE}/MetalANGLE.framework.ios.zip"
+          unzip -q -o /tmp/ma_sim.zip -d third_party/metalangle/ios-sim
+          unzip -q -o /tmp/ma_dev.zip -d third_party/metalangle/ios-device
+          # Create the modulemap MetalANGLE.framework lacks
+          mkdir -p third_party/metalangle/ios-sim/MetalANGLE.framework/Modules
+          cat > third_party/metalangle/ios-sim/MetalANGLE.framework/Modules/module.modulemap <<'MM'
+          framework module MetalANGLE {
+            umbrella header "MGLKit.h"
+            export *
+            module * { export * }
+          }
+          MM
+
+      - name: Build Kotlin iOS frameworks
+        run: ./gradlew :renderer:linkDebugFrameworkIosSimulatorArm64 :renderer:linkDebugFrameworkIosArm64 --stacktrace
+        working-directory: kotlin
+
+      - name: Fix framework bundle identifiers
+        run: |
+          for fw in renderer/build/bin/iosSimulatorArm64/debugFramework/MilkyWayRenderer.framework renderer/build/bin/iosArm64/debugFramework/MilkyWayRenderer.framework; do
+            /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier de.hanno-rein.mw.MilkyWayRenderer" "$fw/Info.plist" 2>/dev/null || true
+          done
+        working-directory: kotlin
+
+      - name: Generate and build iOS simulator app
+        run: |
+          cd iosApp
+          xcodegen generate
+          xcodebuild \
+            -project MilkyWayKMP.xcodeproj \
+            -scheme MilkyWayKMP \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=YES \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+        working-directory: kotlin

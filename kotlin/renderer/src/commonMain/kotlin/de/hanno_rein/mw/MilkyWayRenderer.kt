@@ -49,7 +49,15 @@ class MilkyWayRenderer(private val gl: Gl) {
 
     // ---- overlay toggles ----
     var annotationsEnabled = false
-    var wondersOverlay = false
+    private val wonderSelection = WonderSelection()
+
+    fun wonderNames(): List<String> = GalacticWonders.names()
+
+    fun toggleWonder(name: String) {
+        wonderSelection.toggle(name)
+    }
+
+    fun selectedWonderCaption(): String? = wonderSelection.selectedCaption
 
     /** Phase 1: CPU-only. Load + parse the catalog, cache shader/texture bytes. */
     fun init(assets: AssetProvider, density: Float, isTablet: Boolean): Boolean {
@@ -263,14 +271,14 @@ class MilkyWayRenderer(private val gl: Gl) {
         gl.disable(E.GL_BLEND)
 
         if (annotationsEnabled) drawSunMarker()
-        if (wondersOverlay) drawWonders()
+        wonderSelection.selectedWonder?.let { drawWonder(it) }
     }
 
     private fun drawSunMarker() {
         val sh = progSun
         if (sh == 0) return
         val r = (MilkyWayConventions.SUN_GALACTOCENTRIC_RADIUS_KPC / MilkyWayConventions.KPC_PER_MODEL_UNIT).toFloat()
-        val az = MilkyWayConventions.BAR_ANGLE_RAD + MilkyWayConventions.SUN_AZIMUTH_OFFSET_FROM_BAR_RAD
+        val az = renderedSunAzimuth()
         val pos = floatArrayOf(r * cos(az), r * sin(az), 0f)
         gl.bindFramebuffer(E.GL_FRAMEBUFFER, 0); gl.viewport(0, 0, viewW, viewH)
         gl.useProgram(sh); gl.enable(E.GL_BLEND); gl.blendFunc(E.GL_ONE, E.GL_ONE_MINUS_SRC_ALPHA)
@@ -288,25 +296,82 @@ class MilkyWayRenderer(private val gl: Gl) {
         gl.disableVertexAttribArray(aP); gl.bindTexture(E.GL_TEXTURE_2D, 0); gl.disable(E.GL_BLEND)
     }
 
-    private fun drawWonders() {
-        val conv = MilkyWayConventions.KPC_PER_MODEL_UNIT.toFloat()
-        val rIn = MilkyWayConventions.HAB_ZONE_INNER_KPC / conv
-        val rOut = MilkyWayConventions.HAB_ZONE_OUTER_KPC / conv
-        val seg = 96
-        // Inner ring (blue), outer ring (green), bar (amber line).
-        drawRing(rIn, floatArrayOf(0.30f, 0.75f, 1.0f, 0.75f), seg)
-        drawRing(rOut, floatArrayOf(0.40f, 1.0f, 0.60f, 0.75f), seg)
-        val half = (MilkyWayConventions.BAR_HALF_LENGTH_KPC / conv).toFloat()
-        val ba = MilkyWayConventions.BAR_ANGLE_RAD
-        drawOverlayLine(floatArrayOf(-half*cos(ba),-half*sin(ba),0f, half*cos(ba),half*sin(ba),0f), 2,
-            floatArrayOf(1.0f, 0.78f, 0.30f, 0.80f), E.GL_LINES)
+    private fun drawWonder(wonder: Wonder) {
+        when (wonder) {
+            is PointWonder -> drawPointWonder(wonder)
+            is ShellWonder -> drawShellWonder(wonder)
+            is LobeWonder -> drawLobeWonder(wonder)
+        }
     }
 
-    private fun drawRing(r: Float, color: FloatArray, seg: Int) {
+    private fun drawPointWonder(wonder: PointWonder) {
+        val pos = pointToRenderedModel(wonder.pos)
+        val d = 0.45f
+        drawOverlayLine(
+            floatArrayOf(
+                pos[0] - d, pos[1], pos[2], pos[0] + d, pos[1], pos[2],
+                pos[0], pos[1] - d, pos[2], pos[0], pos[1] + d, pos[2],
+                pos[0], pos[1], pos[2] - d, pos[0], pos[1], pos[2] + d,
+            ),
+            6,
+            floatArrayOf(1.0f, 0.86f, 0.30f, 0.92f),
+            E.GL_LINES
+        )
+        drawEllipse(
+            center = pos,
+            axisA = floatArrayOf(0.7f, 0f, 0f),
+            axisB = floatArrayOf(0f, 0.7f, 0f),
+            seg = 48,
+            color = floatArrayOf(1.0f, 0.86f, 0.30f, 0.65f)
+        )
+    }
+
+    private fun drawShellWonder(wonder: ShellWonder) {
+        val r = wonder.radiusKpc / MilkyWayConventions.KPC_PER_MODEL_UNIT.toFloat()
+        val color = floatArrayOf(0.45f, 0.72f, 1.0f, 0.42f)
+        val center = floatArrayOf(0f, 0f, 0f)
+        drawEllipse(center, floatArrayOf(r, 0f, 0f), floatArrayOf(0f, r, 0f), 128, color)
+        drawEllipse(center, floatArrayOf(r, 0f, 0f), floatArrayOf(0f, 0f, r), 128, color)
+        drawEllipse(center, floatArrayOf(0f, r, 0f), floatArrayOf(0f, 0f, r), 128, color)
+    }
+
+    private fun drawLobeWonder(wonder: LobeWonder) {
+        val h = wonder.halfHeightKpc / MilkyWayConventions.KPC_PER_MODEL_UNIT.toFloat()
+        val radial = h * 0.36f
+        val zRadius = h * 0.5f
+        val color = floatArrayOf(0.90f, 0.48f, 1.0f, 0.58f)
+        drawOverlayLine(floatArrayOf(0f, 0f, -h, 0f, 0f, h), 2, color, E.GL_LINES)
+        for (sign in listOf(-1f, 1f)) {
+            val center = floatArrayOf(0f, 0f, sign * zRadius)
+            drawEllipse(center, floatArrayOf(radial, 0f, 0f), floatArrayOf(0f, 0f, zRadius), 96, color)
+            drawEllipse(center, floatArrayOf(0f, radial, 0f), floatArrayOf(0f, 0f, zRadius), 96, color)
+        }
+    }
+
+    private fun pointToRenderedModel(pos: Vec3): FloatArray {
+        val conv = MilkyWayConventions.KPC_PER_MODEL_UNIT.toFloat()
+        val x = pos.x / conv
+        val y = pos.y / conv
+        val az = renderedSunAzimuth()
+        return floatArrayOf(
+            x * cos(az) - y * sin(az),
+            x * sin(az) + y * cos(az),
+            pos.z / conv
+        )
+    }
+
+    private fun renderedSunAzimuth(): Float =
+        MilkyWayConventions.BAR_ANGLE_RAD + MilkyWayConventions.SUN_AZIMUTH_OFFSET_FROM_BAR_RAD
+
+    private fun drawEllipse(center: FloatArray, axisA: FloatArray, axisB: FloatArray, seg: Int, color: FloatArray) {
         val pts = FloatArray((seg + 1) * 3)
         for (i in 0..seg) {
             val a = i.toFloat() / seg * 2f * 3.14159265358979323846f
-            pts[i*3] = r * cos(a); pts[i*3+1] = r * sin(a); pts[i*3+2] = 0f
+            val c = cos(a)
+            val s = sin(a)
+            pts[i * 3] = center[0] + axisA[0] * c + axisB[0] * s
+            pts[i * 3 + 1] = center[1] + axisA[1] * c + axisB[1] * s
+            pts[i * 3 + 2] = center[2] + axisA[2] * c + axisB[2] * s
         }
         drawOverlayLine(pts, seg + 1, color, E.GL_LINE_STRIP)
     }

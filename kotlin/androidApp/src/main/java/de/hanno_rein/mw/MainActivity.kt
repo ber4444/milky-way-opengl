@@ -52,22 +52,29 @@ class MainActivity : Activity() {
             visibility = android.view.View.GONE
             layoutParams = FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM)
         }
-        val sunBtn = overlayButton(" ⊙ Sun ")
-        val wondersBtn = overlayButton(" ✦ Wonders ")
         val row = android.widget.LinearLayout(this).apply {
             orientation = android.widget.LinearLayout.HORIZONTAL
+        }
+        val controls = android.widget.HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
             layoutParams = FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.START).apply { topMargin = 48; marginStart = 24 }
         }
+        val sunBtn = overlayButton(" ⊙ Sun ")
         sunBtn.setOnClickListener {
             renderer.annotationsEnabled = !renderer.annotationsEnabled
             updateCaption(caption, renderer)
         }
-        wondersBtn.setOnClickListener {
-            renderer.wondersOverlay = !renderer.wondersOverlay
-            updateCaption(caption, renderer)
+        row.addView(sunBtn)
+        renderer.wonderNames().forEach { name ->
+            val wonderBtn = overlayButton(" ✦ $name ")
+            wonderBtn.setOnClickListener {
+                renderer.toggleWonder(name)
+                updateCaption(caption, renderer)
+            }
+            row.addView(wonderBtn)
         }
-        row.addView(sunBtn); row.addView(wondersBtn)
-        root.addView(row); root.addView(caption)
+        controls.addView(row)
+        root.addView(controls); root.addView(caption)
         setContentView(root)
     }
 
@@ -78,7 +85,7 @@ class MainActivity : Activity() {
     private fun updateCaption(caption: TextView, r: MilkyWayRenderer) {
         val lines = mutableListOf<String>()
         if (r.annotationsEnabled) lines += "☉ Our address: ~8.2 kpc from the galactic center, on the Local (Orion) Spur."
-        if (r.wondersOverlay) lines += "✦ Galactic habitable zone (6.5–9.8 kpc): where a star can host a stable, heavy-element-rich, low-radiation planetary system."
+        r.selectedWonderCaption()?.let { lines += it }
         caption.text = lines.joinToString("\n\n")
         caption.visibility = if (lines.isEmpty()) android.view.View.GONE else android.view.View.VISIBLE
     }

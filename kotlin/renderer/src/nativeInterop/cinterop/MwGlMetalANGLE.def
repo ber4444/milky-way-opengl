@@ -1,6 +1,6 @@
 headers = MwGlMetalANGLE.h
 headerFilter = MwGlMetalANGLE.h
-linkerOpts = -F/Users/presence/OpenGLMilkyWay/third_party/metalangle/ios-sim -framework MetalANGLE -framework Metal -framework UIKit
+linkerOpts = -framework Metal -framework UIKit
 ---
 
 #include "MwGlMetalANGLE.h"
