@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "OpenGLMilkyWay"
-include(":app")
+rootProject.name = "MilkyWayKMP"
+include(":renderer", ":androidApp")

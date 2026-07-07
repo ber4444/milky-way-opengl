@@ -1,0 +1,484 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0213C4984CCE9C71D732375A /* QuadMilkyWay.fsh in Resources */ = {isa = PBXBuildFile; fileRef = E0DDB327E000D9A6CBEE47D1 /* QuadMilkyWay.fsh */; };
+		07E34E9E21DCC2F3E2BE3217 /* PointsMilkyWayToTexture.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 74F713475A9A217EB1463F4C /* PointsMilkyWayToTexture.vsh */; };
+		0E538176600A8FDCAAD59562 /* MilkyWayGLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CDEA7BE6BE4CE2A6457B87 /* MilkyWayGLView.swift */; };
+		12BDA51E5E2C560E9CF17B0C /* OverlayLine.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B33A4A50E0C264F4B97900B0 /* OverlayLine.fsh */; };
+		25D64E9228AAC21B6F8ACB54 /* PointsMilkyWay.vsh in Resources */ = {isa = PBXBuildFile; fileRef = BDA2B1753C396957F33DE538 /* PointsMilkyWay.vsh */; };
+		2AA2250FD01BE874ED07CAB7 /* PointsMilkyWayToTexture.fsh in Resources */ = {isa = PBXBuildFile; fileRef = AFCC676ACB7B6D722A1A3EC0 /* PointsMilkyWayToTexture.fsh */; };
+		4609F197E193E41BCC47D13B /* AssetProviderBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482AF92FAA64B84EAFE25BE1 /* AssetProviderBridge.swift */; };
+		6C68282751198675702186D3 /* MetalANGLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0B4EC7D85364462870F81A7D /* MetalANGLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7FA4B7812C4EAD67D17096FA /* milkywaybg.png in Resources */ = {isa = PBXBuildFile; fileRef = A8B653A4E3D0C1C4B6874E38 /* milkywaybg.png */; };
+		813E6669F1AD53FBE3D50D95 /* MilkyWayRenderer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7097E47D73A928BC5F861A72 /* MilkyWayRenderer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		859FDCF8611C78D38E187C28 /* PointsMilkyWay.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B58CEAE4FBF48AC4CAAAC2D7 /* PointsMilkyWay.fsh */; };
+		88FAF4FA6DD817FBC411B7A7 /* sun_marker.png in Resources */ = {isa = PBXBuildFile; fileRef = DF538FE59603997290BB01B9 /* sun_marker.png */; };
+		99E96742D7FA687C36E2FD63 /* milkywaydust.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E694FED4845E435A7AA302B /* milkywaydust.png */; };
+		9F888343DEDE31B691EDBAE1 /* OverlayLine.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 8CE45B017D652A40C9F9B4B3 /* OverlayLine.vsh */; };
+		A201FC936ECAF631719DCA32 /* milkyway0.binary in Resources */ = {isa = PBXBuildFile; fileRef = 931A5C4FCE4B7B4970A1BE9A /* milkyway0.binary */; };
+		A7D1FAA41EC6479667976C92 /* SunMarker.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 4ED9F107C2DC4C5CA7E8B267 /* SunMarker.fsh */; };
+		B879F157E81079467D1B6FB3 /* MilkyWayRenderer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7097E47D73A928BC5F861A72 /* MilkyWayRenderer.framework */; };
+		C5CD6F206BAC2710BFBA2372 /* QuadMilkyWay.vsh in Resources */ = {isa = PBXBuildFile; fileRef = D0E01B0CB834666208D81B09 /* QuadMilkyWay.vsh */; };
+		E3C95BAFF5C28F881D5E098C /* MetalANGLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B4EC7D85364462870F81A7D /* MetalANGLE.framework */; };
+		E5F75E2A5968CC37F632406E /* newblob.png in Resources */ = {isa = PBXBuildFile; fileRef = F8A5CEC03783393F804A5002 /* newblob.png */; };
+		F08A37FA46D0119520518944 /* SunMarker.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 40CAFFA1C0A5FF96075FC19F /* SunMarker.vsh */; };
+		FB87A88AA4C9CF6772FB8F91 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BAA3951E49E579F6DF8101 /* AppDelegate.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A642E2A85266AB87051DE96B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				813E6669F1AD53FBE3D50D95 /* MilkyWayRenderer.framework in Embed Frameworks */,
+				6C68282751198675702186D3 /* MetalANGLE.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0B4EC7D85364462870F81A7D /* MetalANGLE.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalANGLE.framework; path = "../../third_party/metalangle/ios-sim/MetalANGLE.framework"; sourceTree = "<group>"; };
+		18CDEA7BE6BE4CE2A6457B87 /* MilkyWayGLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilkyWayGLView.swift; sourceTree = "<group>"; };
+		40CAFFA1C0A5FF96075FC19F /* SunMarker.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = SunMarker.vsh; sourceTree = "<group>"; };
+		482AF92FAA64B84EAFE25BE1 /* AssetProviderBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetProviderBridge.swift; sourceTree = "<group>"; };
+		4E694FED4845E435A7AA302B /* milkywaydust.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = milkywaydust.png; sourceTree = "<group>"; };
+		4ED9F107C2DC4C5CA7E8B267 /* SunMarker.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = SunMarker.fsh; sourceTree = "<group>"; };
+		7097E47D73A928BC5F861A72 /* MilkyWayRenderer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MilkyWayRenderer.framework; path = ../renderer/build/bin/iosSimulatorArm64/debugFramework/MilkyWayRenderer.framework; sourceTree = "<group>"; };
+		70BAA3951E49E579F6DF8101 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		718406AAF61826E016092BD8 /* MilkyWayKMP.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MilkyWayKMP.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		74F713475A9A217EB1463F4C /* PointsMilkyWayToTexture.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = PointsMilkyWayToTexture.vsh; sourceTree = "<group>"; };
+		8CE45B017D652A40C9F9B4B3 /* OverlayLine.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = OverlayLine.vsh; sourceTree = "<group>"; };
+		931A5C4FCE4B7B4970A1BE9A /* milkyway0.binary */ = {isa = PBXFileReference; path = milkyway0.binary; sourceTree = "<group>"; };
+		A8B653A4E3D0C1C4B6874E38 /* milkywaybg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = milkywaybg.png; sourceTree = "<group>"; };
+		AFCC676ACB7B6D722A1A3EC0 /* PointsMilkyWayToTexture.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = PointsMilkyWayToTexture.fsh; sourceTree = "<group>"; };
+		B33A4A50E0C264F4B97900B0 /* OverlayLine.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = OverlayLine.fsh; sourceTree = "<group>"; };
+		B58CEAE4FBF48AC4CAAAC2D7 /* PointsMilkyWay.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = PointsMilkyWay.fsh; sourceTree = "<group>"; };
+		BDA2B1753C396957F33DE538 /* PointsMilkyWay.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = PointsMilkyWay.vsh; sourceTree = "<group>"; };
+		D0E01B0CB834666208D81B09 /* QuadMilkyWay.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = QuadMilkyWay.vsh; sourceTree = "<group>"; };
+		DF538FE59603997290BB01B9 /* sun_marker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sun_marker.png; sourceTree = "<group>"; };
+		E0DDB327E000D9A6CBEE47D1 /* QuadMilkyWay.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = QuadMilkyWay.fsh; sourceTree = "<group>"; };
+		F8A5CEC03783393F804A5002 /* newblob.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = newblob.png; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1AAC7363AC3F4C92DF1A1ED /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B879F157E81079467D1B6FB3 /* MilkyWayRenderer.framework in Frameworks */,
+				E3C95BAFF5C28F881D5E098C /* MetalANGLE.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		063B1A4422D12F854930C290 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				718406AAF61826E016092BD8 /* MilkyWayKMP.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		51B975343E1F8CC9D6AF7ECF = {
+			isa = PBXGroup;
+			children = (
+				AC28CEA59A2E24B956966C51 /* MilkyWayRendererHost */,
+				DBE5210E13A590C66091F7ED /* Resources */,
+				DFB843E17F21C84AB7AD386C /* Frameworks */,
+				063B1A4422D12F854930C290 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AC28CEA59A2E24B956966C51 /* MilkyWayRendererHost */ = {
+			isa = PBXGroup;
+			children = (
+				70BAA3951E49E579F6DF8101 /* AppDelegate.swift */,
+				482AF92FAA64B84EAFE25BE1 /* AssetProviderBridge.swift */,
+				18CDEA7BE6BE4CE2A6457B87 /* MilkyWayGLView.swift */,
+			);
+			path = MilkyWayRendererHost;
+			sourceTree = "<group>";
+		};
+		DBE5210E13A590C66091F7ED /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				931A5C4FCE4B7B4970A1BE9A /* milkyway0.binary */,
+				A8B653A4E3D0C1C4B6874E38 /* milkywaybg.png */,
+				4E694FED4845E435A7AA302B /* milkywaydust.png */,
+				F8A5CEC03783393F804A5002 /* newblob.png */,
+				B33A4A50E0C264F4B97900B0 /* OverlayLine.fsh */,
+				8CE45B017D652A40C9F9B4B3 /* OverlayLine.vsh */,
+				B58CEAE4FBF48AC4CAAAC2D7 /* PointsMilkyWay.fsh */,
+				BDA2B1753C396957F33DE538 /* PointsMilkyWay.vsh */,
+				AFCC676ACB7B6D722A1A3EC0 /* PointsMilkyWayToTexture.fsh */,
+				74F713475A9A217EB1463F4C /* PointsMilkyWayToTexture.vsh */,
+				E0DDB327E000D9A6CBEE47D1 /* QuadMilkyWay.fsh */,
+				D0E01B0CB834666208D81B09 /* QuadMilkyWay.vsh */,
+				DF538FE59603997290BB01B9 /* sun_marker.png */,
+				4ED9F107C2DC4C5CA7E8B267 /* SunMarker.fsh */,
+				40CAFFA1C0A5FF96075FC19F /* SunMarker.vsh */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		DFB843E17F21C84AB7AD386C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0B4EC7D85364462870F81A7D /* MetalANGLE.framework */,
+				7097E47D73A928BC5F861A72 /* MilkyWayRenderer.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E7753B8BB3EE70A5FBD5EF98 /* MilkyWayKMP */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6FF1DCBE030F87F890951A5B /* Build configuration list for PBXNativeTarget "MilkyWayKMP" */;
+			buildPhases = (
+				F7C572F0DBBD9629F1EF52BB /* Sources */,
+				80CE893058770EB65A1EEB10 /* Resources */,
+				A1AAC7363AC3F4C92DF1A1ED /* Frameworks */,
+				A642E2A85266AB87051DE96B /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MilkyWayKMP;
+			packageProductDependencies = (
+			);
+			productName = MilkyWayKMP;
+			productReference = 718406AAF61826E016092BD8 /* MilkyWayKMP.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E06D038C54C7FD870DFBEB3A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = FCC93341313AA5A1421BD614 /* Build configuration list for PBXProject "MilkyWayKMP" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 51B975343E1F8CC9D6AF7ECF;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 063B1A4422D12F854930C290 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E7753B8BB3EE70A5FBD5EF98 /* MilkyWayKMP */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		80CE893058770EB65A1EEB10 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12BDA51E5E2C560E9CF17B0C /* OverlayLine.fsh in Resources */,
+				9F888343DEDE31B691EDBAE1 /* OverlayLine.vsh in Resources */,
+				859FDCF8611C78D38E187C28 /* PointsMilkyWay.fsh in Resources */,
+				25D64E9228AAC21B6F8ACB54 /* PointsMilkyWay.vsh in Resources */,
+				2AA2250FD01BE874ED07CAB7 /* PointsMilkyWayToTexture.fsh in Resources */,
+				07E34E9E21DCC2F3E2BE3217 /* PointsMilkyWayToTexture.vsh in Resources */,
+				0213C4984CCE9C71D732375A /* QuadMilkyWay.fsh in Resources */,
+				C5CD6F206BAC2710BFBA2372 /* QuadMilkyWay.vsh in Resources */,
+				A7D1FAA41EC6479667976C92 /* SunMarker.fsh in Resources */,
+				F08A37FA46D0119520518944 /* SunMarker.vsh in Resources */,
+				A201FC936ECAF631719DCA32 /* milkyway0.binary in Resources */,
+				7FA4B7812C4EAD67D17096FA /* milkywaybg.png in Resources */,
+				99E96742D7FA687C36E2FD63 /* milkywaydust.png in Resources */,
+				E5F75E2A5968CC37F632406E /* newblob.png in Resources */,
+				88FAF4FA6DD817FBC411B7A7 /* sun_marker.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F7C572F0DBBD9629F1EF52BB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB87A88AA4C9CF6772FB8F91 /* AppDelegate.swift in Sources */,
+				4609F197E193E41BCC47D13B /* AssetProviderBridge.swift in Sources */,
+				0E538176600A8FDCAAD59562 /* MilkyWayGLView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		566F9B71665AA81C172CA122 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"../../third_party/metalangle/ios-sim\"",
+					"\"../renderer/build/bin/iosSimulatorArm64/debugFramework\"",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_GENERATION = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hanno-rein.milkyway-kmp";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = NO;
+			};
+			name = Release;
+		};
+		5BA17960F8D096DC49DBB9B6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../renderer/build/bin/iosSimulatorArm64/debugFramework",
+					"$(PROJECT_DIR)/../renderer/build/bin/iosArm64/debugFramework",
+					"$(PROJECT_DIR)/../../third_party/metalangle/ios-sim",
+					"$(PROJECT_DIR)/../../third_party/metalangle/ios-device",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lObjC",
+					"-framework",
+					MetalANGLE,
+					"-framework",
+					Metal,
+					"-framework",
+					UIKit,
+					"-framework",
+					CoreGraphics,
+					"-framework",
+					QuartzCore,
+					"-framework",
+					Foundation,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		7C7A205F8D8045436F47C980 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"../../third_party/metalangle/ios-sim\"",
+					"\"../renderer/build/bin/iosSimulatorArm64/debugFramework\"",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_GENERATION = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hanno-rein.milkyway-kmp";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = NO;
+			};
+			name = Debug;
+		};
+		9A7CD6454DD0CDB5BAC3FF2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../renderer/build/bin/iosSimulatorArm64/debugFramework",
+					"$(PROJECT_DIR)/../renderer/build/bin/iosArm64/debugFramework",
+					"$(PROJECT_DIR)/../../third_party/metalangle/ios-sim",
+					"$(PROJECT_DIR)/../../third_party/metalangle/ios-device",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"-lObjC",
+					"-framework",
+					MetalANGLE,
+					"-framework",
+					Metal,
+					"-framework",
+					UIKit,
+					"-framework",
+					CoreGraphics,
+					"-framework",
+					QuartzCore,
+					"-framework",
+					Foundation,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6FF1DCBE030F87F890951A5B /* Build configuration list for PBXNativeTarget "MilkyWayKMP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C7A205F8D8045436F47C980 /* Debug */,
+				566F9B71665AA81C172CA122 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FCC93341313AA5A1421BD614 /* Build configuration list for PBXProject "MilkyWayKMP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BA17960F8D096DC49DBB9B6 /* Debug */,
+				9A7CD6454DD0CDB5BAC3FF2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E06D038C54C7FD870DFBEB3A /* Project object */;
+}
