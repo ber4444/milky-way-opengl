@@ -41,6 +41,7 @@ class MilkyWayRenderer(private val gl: Gl) {
     private var vboStar = 0;  private var vboQuad = 0
     private var texBg = 0; private var texDust = 0; private var texBlob = 0; private var texSun = 0
     private var fboDust = 0; private var fboDustTex = 0
+    private var vboScratch = 0
 
     // ---- per-frame inputs ----
     private val mv = FloatArray(16); private val proj = FloatArray(16)
@@ -92,6 +93,7 @@ class MilkyWayRenderer(private val gl: Gl) {
         )
         vboQuad = gl.createBuffer(); gl.bindBuffer(E.GL_ARRAY_BUFFER, vboQuad)
         gl.bufferData(E.GL_ARRAY_BUFFER, quadVerts, E.GL_STATIC_DRAW); gl.bindBuffer(E.GL_ARRAY_BUFFER, 0)
+        vboScratch = gl.createBuffer()
         buildDustFbo()
         glValid = true
         return true
@@ -129,7 +131,7 @@ class MilkyWayRenderer(private val gl: Gl) {
             }
         }
 
-        if (premultiply && dec.n >= 4) {
+        if (premultiply && dec.n >= 4 && !dec.premultiplied) {
             var i = 0
             while (i < rgba.size) {
                 val a = rgba[i + 3].toInt() and 0xFF
@@ -160,7 +162,10 @@ class MilkyWayRenderer(private val gl: Gl) {
         val stride = if (rgba.size > 4096) 16 else 4
         var i = 0
         while (i < rgba.size) {
-            if (rgba[i] != rgba[i + 1] || rgba[i + 1] != rgba[i + 2]) return false
+            val r = rgba[i].toInt() and 0xFF
+            val g = rgba[i + 1].toInt() and 0xFF
+            val b = rgba[i + 2].toInt() and 0xFF
+            if (kotlin.math.abs(r - g) > 5 || kotlin.math.abs(g - b) > 5) return false
             i += stride
         }
         return true
@@ -276,9 +281,9 @@ class MilkyWayRenderer(private val gl: Gl) {
         gl.uniform1f(gl.uniformLocation(sh, "pointSize"), minOf(viewW, viewH) * 0.09f)
         val aP = gl.attribLocation(sh, "Position")
         gl.enableVertexAttribArray(aP)
-        // single-vertex attrib pointer into a transient array — façade handles pinning
-        gl.bindBuffer(E.GL_ARRAY_BUFFER, 0)
-        gl.vertexAttribPointerDirect(aP, 3, pos)
+        gl.bindBuffer(E.GL_ARRAY_BUFFER, vboScratch)
+        gl.bufferData(E.GL_ARRAY_BUFFER, pos, E.GL_STATIC_DRAW)
+        gl.vertexAttribPointer(aP, 3, E.GL_FLOAT, false, 0, 0)
         gl.drawArrays(E.GL_POINTS, 0, 1)
         gl.disableVertexAttribArray(aP); gl.bindTexture(E.GL_TEXTURE_2D, 0); gl.disable(E.GL_BLEND)
     }
@@ -315,8 +320,9 @@ class MilkyWayRenderer(private val gl: Gl) {
         gl.uniformMatrix4fv(gl.uniformLocation(sh, "projectionMatrix"), 1, false, proj)
         gl.uniform4fv(gl.uniformLocation(sh, "Color"), color)
         val aP = gl.attribLocation(sh, "Position")
-        gl.enableVertexAttribArray(aP); gl.bindBuffer(E.GL_ARRAY_BUFFER, 0)
-        gl.vertexAttribPointerDirect(aP, 3, verts)
+        gl.enableVertexAttribArray(aP); gl.bindBuffer(E.GL_ARRAY_BUFFER, vboScratch)
+        gl.bufferData(E.GL_ARRAY_BUFFER, verts, E.GL_STATIC_DRAW)
+        gl.vertexAttribPointer(aP, 3, E.GL_FLOAT, false, 0, 0)
         gl.drawArrays(mode, 0, count)
         gl.disableVertexAttribArray(aP); gl.disable(E.GL_BLEND)
     }

@@ -5,13 +5,20 @@ linkerOpts = -F/Users/presence/OpenGLMilkyWay/third_party/metalangle/ios-sim -fr
 
 #include "MwGlMetalANGLE.h"
 #include <stddef.h>
+#include <stdio.h>
 
 static GLuint mwgl_compile(GLenum type, const char* src) {
     GLuint s = glCreateShader(type);
     glShaderSource(s, 1, &src, NULL);
     glCompileShader(s);
     GLint ok; glGetShaderiv(s, GL_COMPILE_STATUS, &ok);
-    if (!ok) { glDeleteShader(s); return 0; }
+    if (!ok) {
+        char log[2048]; GLsizei len = 0;
+        glGetShaderInfoLog(s, sizeof(log), &len, log);
+        fprintf(stderr, "[mwgl] %s shader compile FAILED:\n%.*s\n",
+                type == GL_VERTEX_SHADER ? "vertex" : "fragment", (int)len, log);
+        glDeleteShader(s); return 0;
+    }
     return s;
 }
 int mwgl_create_program(const char* vert_src, const char* frag_src) {
@@ -23,7 +30,12 @@ int mwgl_create_program(const char* vert_src, const char* frag_src) {
     glLinkProgram(p);
     glDeleteShader(vs); glDeleteShader(fs);
     GLint ok; glGetProgramiv(p, GL_LINK_STATUS, &ok);
-    if (!ok) { glDeleteProgram(p); return 0; }
+    if (!ok) {
+        char log[2048]; GLsizei len = 0;
+        glGetProgramInfoLog(p, sizeof(log), &len, log);
+        fprintf(stderr, "[mwgl] program link FAILED:\n%.*s\n", (int)len, log);
+        glDeleteProgram(p); return 0;
+    }
     return p;
 }
 void mwgl_use_program(int program) { glUseProgram(program); }

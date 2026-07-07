@@ -14,7 +14,7 @@ import CoreGraphics
 class MilkyWayGLView: UIView {
     private var mglContext: MGLContext!
     private var displayLink: CADisplayLink?
-    private var framebuffer: GLuint = 0
+    private var glReady = false
 
     let renderer: MilkyWayRenderer
     let camera: ArcballCamera
@@ -32,6 +32,12 @@ class MilkyWayGLView: UIView {
         self.renderer = MilkyWayRenderer(gl: GlIos())
         self.camera = ArcballCamera()
         super.init(frame: frame)
+        // Render at native resolution: without this the MGLLayer stays at
+        // contentsScale 1.0 and GL draws at point (not pixel) resolution,
+        // then gets blur-upscaled by the compositor. The original app drew
+        // into a Retina-scaled GLKView; this is the equivalent.
+        contentScaleFactor = UIScreen.main.scale
+        layer.contentsScale = UIScreen.main.scale
         setup()
     }
     required init?(coder: NSCoder) { fatalError("init(coder:) not supported") }
@@ -59,6 +65,9 @@ class MilkyWayGLView: UIView {
     func setupGL() {
         let mglLayer = self.layer as! MGLLayer
         MGLContext.setCurrent(mglContext, for: mglLayer)
+        NSLog("[glview] bounds=%@ contentScaleFactor=%.2f layer.contentsScale=%.2f drawableSize=%@ screenScale=%.2f",
+              NSCoder.string(for: bounds), contentScaleFactor, mglLayer.contentsScale,
+              NSCoder.string(for: mglLayer.drawableSize), UIScreen.main.scale)
         _ = renderer.onGlContextCreated()
         camera.setViewportWidthDp(widthDp: Float(bounds.width))
     }
@@ -80,8 +89,11 @@ class MilkyWayGLView: UIView {
         let proj = KotlinFloatArray(size: 16)
         camera.modelViewMatrix(out: mv)
         camera.projectionMatrix(out: proj, width: Float(bounds.width), height: Float(bounds.height))
+        // Viewport must be in drawable pixels, not points — gl_PointSize and
+        // glViewport both operate in framebuffer pixels.
+        let ds = mglLayer.drawableSize
         renderer.setFrame(modelView: mv, projection: proj, scale: camera.userScale(),
-                          w: Int32(bounds.width), h: Int32(bounds.height))
+                          w: Int32(ds.width), h: Int32(ds.height))
 
         // Clear and draw. MetalANGLE's default framebuffer is managed by MGLLayer.
         glClearColor(0, 0, 0, 1)
@@ -93,7 +105,7 @@ class MilkyWayGLView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        if framebuffer == 0 { setupGL() }
+        if !glReady { glReady = true; setupGL() }
     }
 
     // MARK: - Context-loss lifecycle (Phase 4)

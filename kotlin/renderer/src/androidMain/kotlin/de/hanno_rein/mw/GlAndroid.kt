@@ -40,8 +40,6 @@ class GlAndroid : Gl {
     override fun bindBuffer(target: Int, b: Int) = GLES20.glBindBuffer(target, b)
     override fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int) =
         GLES20.glVertexAttribPointer(index, size, type, normalized, stride, offset)
-    override fun vertexAttribPointerDirect(index: Int, size: Int, data: FloatArray, stride: Int, offset: Int) =
-        GLES20.glVertexAttribPointer(index, size, GLES20.GL_FLOAT, false, stride, data.toDirectBuffer().position(offset / 4))
     override fun enableVertexAttribArray(index: Int) = GLES20.glEnableVertexAttribArray(index)
     override fun disableVertexAttribArray(index: Int) = GLES20.glDisableVertexAttribArray(index)
     override fun createTexture(): Int { val a = IntArray(1); GLES20.glGenTextures(1, a, 0); return a[0] }
