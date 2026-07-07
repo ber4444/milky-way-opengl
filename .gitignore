@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+
+# Gradle / Kotlin
+.gradle/
+build/
+local.properties
+.cxx/
+kotlin/.gradle/
+kotlin/build/
+kotlin/local.properties
+kotlin/renderer/build/
+kotlin/androidApp/build/
+kotlin/iosApp/build/
+kotlin/iosApp/.xcodegen.env
+kotlin/iosApp/build/DerivedData/
+
+# Xcode
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Vendored third-party deps (fetched, not committed):
+#  - third_party/metalangle/ -> see tools/fetch_metalangle.sh
+third_party/
+
+# IDE
+.idea/
+*.iml
+.vscode/

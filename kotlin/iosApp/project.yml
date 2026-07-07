@@ -1,0 +1,53 @@
+name: MilkyWayKMP
+options:
+  bundleIdPrefix: de.hanno-rein
+  deploymentTarget:
+    iOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_OBJC_BRIDGING_HEADER: ""
+    FRAMEWORK_SEARCH_PATHS:
+      - "$(inherited)"
+      - "$(PROJECT_DIR)/../renderer/build/bin/iosSimulatorArm64/debugFramework"
+      - "$(PROJECT_DIR)/../renderer/build/bin/iosArm64/debugFramework"
+      - "$(PROJECT_DIR)/../../third_party/metalangle/ios-sim"
+      - "$(PROJECT_DIR)/../../third_party/metalangle/ios-device"
+    OTHER_LDFLAGS:
+      - "-lObjC"
+      - "-framework"
+      - "MetalANGLE"
+      - "-framework"
+      - "Metal"
+      - "-framework"
+      - "UIKit"
+      - "-framework"
+      - "CoreGraphics"
+      - "-framework"
+      - "QuartzCore"
+      - "-framework"
+      - "Foundation"
+    LD_RUNPATH_SEARCH_PATHS:
+      - "$(inherited)"
+      - "@executable_path/Frameworks"
+      - "@loader_path/Frameworks"
+targets:
+  MilkyWayKMP:
+    type: application
+    platform: iOS
+    sources:
+      - path: MilkyWayRendererHost
+      - path: Resources
+    dependencies:
+      - framework: ../renderer/build/bin/iosSimulatorArm64/debugFramework/MilkyWayRenderer.framework
+        embed: true
+      - framework: ../../third_party/metalangle/ios-sim/MetalANGLE.framework
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: de.hanno-rein.milkyway-kmp
+        INFOPLIST_GENERATION: YES
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "5.0"
+        VALIDATE_WORKSPACE: NO

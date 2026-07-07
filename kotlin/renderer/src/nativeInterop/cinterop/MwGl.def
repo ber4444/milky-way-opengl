@@ -1,0 +1,62 @@
+headers = MwGl.h
+headerFilter = MwGl.h
+linkerOpts = -framework OpenGLES
+
+---
+
+#include "MwGl.h"
+#include <stddef.h>
+
+static GLuint mwgl_compile(GLenum type, const char* src) {
+    GLuint s = glCreateShader(type);
+    glShaderSource(s, 1, &src, NULL);
+    glCompileShader(s);
+    GLint ok; glGetShaderiv(s, GL_COMPILE_STATUS, &ok);
+    if (!ok) { glDeleteShader(s); return 0; }
+    return s;
+}
+int mwgl_create_program(const char* vert_src, const char* frag_src) {
+    GLuint vs = mwgl_compile(GL_VERTEX_SHADER, vert_src);
+    GLuint fs = mwgl_compile(GL_FRAGMENT_SHADER, frag_src);
+    if (!vs || !fs) return 0;
+    GLuint p = glCreateProgram();
+    glAttachShader(p, vs); glAttachShader(p, fs);
+    glLinkProgram(p);
+    glDeleteShader(vs); glDeleteShader(fs);
+    GLint ok; glGetProgramiv(p, GL_LINK_STATUS, &ok);
+    if (!ok) { glDeleteProgram(p); return 0; }
+    return p;
+}
+void mwgl_use_program(int program) { glUseProgram(program); }
+int mwgl_attrib_location(int program, const char* name) { return glGetAttribLocation(program, name); }
+int mwgl_uniform_location(int program, const char* name) { return glGetUniformLocation(program, name); }
+void mwgl_uniform_matrix4fv(int loc, int count, int transpose, const float* value) { glUniformMatrix4fv(loc, count, transpose, value); }
+void mwgl_uniform1i(int loc, int v) { glUniform1i(loc, v); }
+void mwgl_uniform1f(int loc, float v) { glUniform1f(loc, v); }
+void mwgl_uniform3fv(int loc, const float* v) { glUniform3fv(loc, 1, v); }
+void mwgl_uniform4fv(int loc, const float* v) { glUniform4fv(loc, 1, v); }
+int mwgl_create_buffer(void) { GLuint b; glGenBuffers(1, &b); return b; }
+void mwgl_buffer_data(int target, const float* data, int count, int usage) { glBufferData(target, count * sizeof(float), data, usage); }
+void mwgl_bind_buffer(int target, int buffer) { glBindBuffer(target, buffer); }
+void mwgl_vertex_attrib_pointer(int index, int size, int type, int normalized, int stride, int offset) { glVertexAttribPointer(index, size, type, normalized, stride, (const void*)(long)offset); }
+void mwgl_vertex_attrib_pointer_floats(int index, int size, const float* data, int stride, int offset) { glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride, data + offset); }
+void mwgl_enable_vertex_attrib_array(int index) { glEnableVertexAttribArray(index); }
+void mwgl_disable_vertex_attrib_array(int index) { glDisableVertexAttribArray(index); }
+int mwgl_create_texture(void) { GLuint t; glGenTextures(1, &t); return t; }
+void mwgl_bind_texture(int target, int texture) { glBindTexture(target, texture); }
+void mwgl_active_texture(int unit) { glActiveTexture(unit); }
+void mwgl_tex_image_2d(int target, int level, int internalFormat, int w, int h, int border, int format, int type, const void* data) { glTexImage2D(target, level, internalFormat, w, h, border, format, type, data); }
+void mwgl_tex_parameteri(int target, int pname, int value) { glTexParameteri(target, pname, value); }
+void mwgl_generate_mipmap(int target) { glGenerateMipmap(target); }
+int mwgl_create_framebuffer(void) { GLuint f; glGenFramebuffers(1, &f); return f; }
+void mwgl_bind_framebuffer(int target, int framebuffer) { glBindFramebuffer(target, framebuffer); }
+void mwgl_framebuffer_texture_2d(int target, int attachment, int textarget, int texture, int level) { glFramebufferTexture2D(target, attachment, textarget, texture, level); }
+int mwgl_check_framebuffer_status(int target) { return glCheckFramebufferStatus(target); }
+void mwgl_viewport(int x, int y, int w, int h) { glViewport(x, y, w, h); }
+void mwgl_clear_color(float r, float g, float b, float a) { glClearColor(r, g, b, a); }
+void mwgl_clear(int mask) { glClear(mask); }
+void mwgl_enable(int cap) { glEnable(cap); }
+void mwgl_disable(int cap) { glDisable(cap); }
+void mwgl_blend_func(int sfactor, int dfactor) { glBlendFunc(sfactor, dfactor); }
+void mwgl_draw_arrays(int mode, int first, int count) { glDrawArrays(mode, first, count); }
+const char* mwgl_get_string(int name) { return (const char*)glGetString(name); }

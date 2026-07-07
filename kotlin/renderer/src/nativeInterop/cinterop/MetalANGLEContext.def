@@ -1,0 +1,6 @@
+headers = MGLContext.h
+headerFilter = MGLContext.h
+linkerOpts = -F/Users/presence/OpenGLMilkyWay/third_party/metalangle/ios-sim -framework MetalANGLE
+---
+
+#import <MGLContext.h>

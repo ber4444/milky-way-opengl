@@ -1,0 +1,112 @@
+OpenGL Milky Way
+===========================================================================
+
+![Milky Way](screenshot.png)
+
+This is an example project to show how to render a Galaxy in OpenGL. To
+simulate interstellar dust realistically with unsorted point sprites, it uses a
+GPU based ray tracing algorithm. This Milky Way model is used in the
+[Exoplanet App](http://exoplanetapp.com), which is available for free on the
+AppStore and contains several other datasets.
+
+I gave a talk about this project at the New York iOS Meetup in January 2013.
+The [slides](https://github.com/hannorein/OpenGLMilkyWay/raw/master/2012%20NY%20iOS%20Meetup.pdf)
+of the talk are included in this repository. For comments, questions, or
+suggestions: exoplanet@hanno-rein.de.
+
+## Architecture
+
+The renderer is a **shared C++ core** (`core/`) that targets pure OpenGL ES 2.0,
+driven by thin platform shells:
+
+```
+core/                        # shared C++ (GLES2, no Obj-C, no JNI)
+├── src/
+│   ├── MilkyWayRenderer.{cpp,h}   # 3-pass frame: bg quad → 256² dust FBO → points
+│   ├── ShaderProgram.{cpp,h}      # compile/link/query, uniform cache
+│   ├── ArcballCamera.{cpp,h}      # quaternion arcball + pinch + roll, velocity decay
+│   └── AssetProvider.h            # interface: name -> bytes (platform implements)
+├── third_party/
+│   ├── stb_image.h                # PNG decode (replaces UIImage/Texture2D)
+│   └── linmath.h                  # mat4/quat math (replaces GLKit math)
+└── assets/                        # canonical shared assets
+    └── *.vsh *.fsh  milkyway0.binary  milkywaybg/dust.png  newblob.png  sun_marker.png
+
+OpenGLMilkyWay/             # iOS app shell (MetalANGLE / MGLKit)
+android/                    # Android app shell (Gradle + NDK/CMake)
+third_party/metalangle/     # MetalANGLE framework (fetched, gitignored)
+```
+
+### Astronomical accuracy
+
+The renderer carries the galaxy's current best-understood structure (all knobs
+live in `core/src/MilkyWayConventions.h`, cited):
+
+- **Two major stellar arms** (Scutum–Centaurus, Perseus) anchored at the central
+  bar — the post-2008 Spitzer-era model, depicted in `milkywaybg.png`.
+- **Gaia galactic warp** — the outer stellar disk (R > 9 kpc) is bent into the
+  classic S-shape measured by Gaia DR2 Cepheid mapping (Chen et al. 2019;
+  Skowron et al. 2019). Applied as a load-time transform on the 65k-star
+  catalog (zero per-frame cost); face-on it's invisible, edge-on it shows the
+  integral-sign profile that flat artwork cannot.
+- **Sun marker** (toggle on/off via the ⊕ button) at ~8.2 kpc from the
+  galactic center on the Local (Orion) Spur (Gravity Collaboration 2019).
+
+> **Artist's impression informed by Spitzer & Gaia survey data — not a
+> photograph.** Base artwork: NASA/JPL-Caltech/R. Hurt (SSC); star catalog and
+> warp model by the port authors from the cited survey data.
+```
+
+### iOS
+
+The original 2012 app used Apple's *deprecated* OpenGL ES + GLKit. It now runs
+on **[MetalANGLE](https://github.com/kakashidinho/metalangle)** — GL-over-Metal —
+which removes the `OpenGLES.framework`/`GLKit.framework` dependencies entirely:
+
+- `GLKViewController` → `MGLKViewController`, `GLKView` → `MGLKView`,
+  `EAGLContext` → `MGLContext(kMGLRenderingAPIOpenGLES2)`.
+- `UniverseViewController` is thin glue: owns the core objects, forwards
+  gestures/resize/draw, keeps the on-screen buttons + Share controller.
+- `AppleAssetProvider` bridges `mw::AssetProvider` to `NSBundle`.
+
+To fetch the (gitignored) MetalANGLE framework:
+```sh
+tools/fetch_metalangle.sh   # installs sim + device slices under third_party/metalangle/
+```
+Then open `OpenGLMilkyWay.xcodeproj` and run on an iPhone or the simulator.
+At launch the app logs `GL_RENDERER = ANGLE (Metal Renderer: …)`, confirming
+the GL calls are serviced by Metal via ANGLE.
+
+### Android
+
+A standard Gradle + NDK/CMake project (`android/`). `MainActivity` hosts a
+`GLSurfaceView` (GLES2, RGBA8888); the JNI bridge (`milkyway_jni.cpp`) compiles
+the shared `core/` into one `libmilkyway.so` and exposes
+`nativeInit/Resize/DrawFrame/Pan/Pinch/Roll/Update`. Gestures are mapped to the
+same arcball/pinch/roll model as iOS. Shared assets are referenced from
+`core/assets` (no duplication).
+
+ANGLE is opted into via the manifest (`uses-native-library`,
+`required="false"`, API 31+); on the Android 14+ emulator the renderer reports
+`ANGLE (… SwiftShader …)`.
+
+```sh
+cd android
+./gradlew :app:assembleDebug
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb shell am start -n de.hanno_rein.milkyway/.MainActivity
+```
+
+## License
+
+OpenGL Milky Way is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+OpenGL Milky Way is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+OpenGL Milky Way. If not, see <http://www.gnu.org/licenses/>.
