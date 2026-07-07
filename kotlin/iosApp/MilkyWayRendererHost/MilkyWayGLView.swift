@@ -37,9 +37,10 @@ class MilkyWayGLView: UIView {
     required init?(coder: NSCoder) { fatalError("init(coder:) not supported") }
 
     private func setup() {
-        // MetalANGLE: create a GL-over-Metal context.
+        // MetalANGLE: create a GL-over-Metal context and bind it to this view's layer.
         mglContext = MGLContext(api: MGLRenderingAPI(rawValue: 2))
-        MGLContext.setCurrent(mglContext)
+        let mglLayer = self.layer as! MGLLayer
+        MGLContext.setCurrent(mglContext, for: mglLayer)
 
         assets = BundleAssetProvider()
         _ = renderer.doInit(assets: assets, density: density, isTablet: isTablet)
@@ -56,7 +57,8 @@ class MilkyWayGLView: UIView {
     override class var layerClass: AnyClass { return MGLLayer.self }
 
     func setupGL() {
-        MGLContext.setCurrent(mglContext)
+        let mglLayer = self.layer as! MGLLayer
+        MGLContext.setCurrent(mglContext, for: mglLayer)
         _ = renderer.onGlContextCreated()
         camera.setViewportWidthDp(widthDp: Float(bounds.width))
     }
@@ -69,7 +71,8 @@ class MilkyWayGLView: UIView {
     func stopRendering() { displayLink?.invalidate(); displayLink = nil }
 
     @objc private func onFrame() {
-        MGLContext.setCurrent(mglContext)
+        let mglLayer = self.layer as! MGLLayer
+        MGLContext.setCurrent(mglContext, for: mglLayer)
         let nowNs = Int64(CACurrentMediaTime() * 1e9)
         camera.update(nowNanos: nowNs)
 
@@ -85,7 +88,7 @@ class MilkyWayGLView: UIView {
         glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
         renderer.draw(defaultFbo: 0)
         // Present via MetalANGLE's layer (static, not instance).
-        mglContext.present(MGLContext.currentLayer())
+        mglContext.present(mglLayer)
     }
 
     override func layoutSubviews() {
@@ -96,7 +99,8 @@ class MilkyWayGLView: UIView {
     // MARK: - Context-loss lifecycle (Phase 4)
     func onAppBackground() { stopRendering() }
     func onAppForeground() {
-        MGLContext.setCurrent(mglContext)
+        let mglLayer = self.layer as! MGLLayer
+        MGLContext.setCurrent(mglContext, for: mglLayer)
         _ = renderer.onGlContextCreated()
         startRendering()
     }

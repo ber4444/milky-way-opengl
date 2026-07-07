@@ -112,6 +112,23 @@ class MilkyWayRenderer(private val gl: Gl) {
     private fun uploadPng(png: ByteArray, premultiply: Boolean): Int {
         val dec = decodePng(png)
         val rgba = dec.rgba
+
+        // Grayscale sources (newblob.png, milkywaydust.png) must route luminance
+        // to alpha. The original 2012 app's Texture2D detected grayscale and used
+        // GL_ALPHA; BitmapFactory/CGImage expand grayscale to RGBA with A=255
+        // (opaque), which makes the shader's .a sample uniformly 255 — solid
+        // square sprites instead of soft circular blobs. Fix: detect by checking
+        // if R==G==B==A for every pixel (the hallmark of a grayscale-expanded
+        // image where the original luminance was copied to all 4 channels).
+        if (dec.n <= 2 || isGrayscaleExpandedToRGBA(rgba)) {
+            var i = 0
+            while (i < rgba.size) {
+                val lum = rgba[i] // R==G==B for grayscale-expanded, so R is luminance
+                rgba[i] = 0; rgba[i + 1] = 0; rgba[i + 2] = 0; rgba[i + 3] = lum
+                i += 4
+            }
+        }
+
         if (premultiply && dec.n >= 4) {
             var i = 0
             while (i < rgba.size) {
@@ -133,6 +150,20 @@ class MilkyWayRenderer(private val gl: Gl) {
         gl.texImage2D(E.GL_TEXTURE_2D, 0, E.GL_RGBA, dec.w, dec.h, 0, E.GL_RGBA, E.GL_UNSIGNED_BYTE, rgba)
         gl.generateMipmap(E.GL_TEXTURE_2D); gl.bindTexture(E.GL_TEXTURE_2D, 0)
         return tex
+    }
+
+    /** Detect whether an RGBA byte array is a grayscale image expanded to RGBA
+     *  (R==G==B for all pixels). This catches the BitmapFactory/CGImage decoding
+     *  of grayscale PNGs, which copy luminance to RGB and set A=255. */
+    private fun isGrayscaleExpandedToRGBA(rgba: ByteArray): Boolean {
+        // Sample a subset for speed (large textures don't need every pixel checked).
+        val stride = if (rgba.size > 4096) 16 else 4
+        var i = 0
+        while (i < rgba.size) {
+            if (rgba[i] != rgba[i + 1] || rgba[i + 1] != rgba[i + 2]) return false
+            i += stride
+        }
+        return true
     }
 
     fun setFrame(modelView: FloatArray, projection: FloatArray, scale: Float, w: Int, h: Int) {
