@@ -40,29 +40,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             b.layer.cornerRadius = 8
             return b
         }
-        let sunBtn = makeButton(" ⊙ Sun ")
-        let wondersBtn = makeButton(" ✦ Wonders ")
-        let stack = UIStackView(arrangedSubviews: [sunBtn, wondersBtn])
-        stack.axis = .horizontal; stack.spacing = 6
-        stack.frame = CGRect(x: 16, y: 56, width: glView.bounds.width - 32, height: 36)
-        stack.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
-        glView.addSubview(stack)
 
         func updateCaption() {
             var lines: [String] = []
             if glView.renderer.annotationsEnabled { lines.append("☉ Our address: ~8.2 kpc from the galactic center, on the Local (Orion) Spur.") }
-            if glView.renderer.wondersOverlay { lines.append("✦ Galactic habitable zone (6.5–9.8 kpc): where a star can host a stable, heavy-element-rich, low-radiation planetary system.") }
+            if let wonderCaption = glView.renderer.selectedWonderCaption() { lines.append(wonderCaption) }
             caption.text = lines.joined(separator: "\n\n")
             caption.isHidden = lines.isEmpty
             caption.sizeToFit()
             var f = caption.frame; f.origin.x = 16; f.size.width = glView.bounds.width - 32
             caption.frame = f
         }
+
+        let sunBtn = makeButton(" ⊙ Sun ")
+        var controls: [UIView] = [sunBtn]
+        for name in glView.renderer.wonderNames() {
+            let wonderBtn = makeButton(" ✦ \(name) ")
+            wonderBtn.addAction(UIAction { _ in
+                glView.renderer.toggleWonder(name: name); updateCaption()
+            }, for: .touchUpInside)
+            controls.append(wonderBtn)
+        }
+        let scroll = UIScrollView()
+        scroll.showsHorizontalScrollIndicator = false
+        scroll.frame = CGRect(x: 16, y: 56, width: glView.bounds.width - 32, height: 36)
+        scroll.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
+        glView.addSubview(scroll)
+
+        let stack = UIStackView(arrangedSubviews: controls)
+        stack.axis = .horizontal; stack.spacing = 6
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        scroll.addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.leadingAnchor.constraint(equalTo: scroll.contentLayoutGuide.leadingAnchor),
+            stack.trailingAnchor.constraint(equalTo: scroll.contentLayoutGuide.trailingAnchor),
+            stack.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor),
+            stack.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor),
+            stack.heightAnchor.constraint(equalTo: scroll.frameLayoutGuide.heightAnchor),
+        ])
+
         sunBtn.addAction(UIAction { _ in
             glView.renderer.annotationsEnabled = !glView.renderer.annotationsEnabled; updateCaption()
-        }, for: .touchUpInside)
-        wondersBtn.addAction(UIAction { _ in
-            glView.renderer.wondersOverlay = !glView.renderer.wondersOverlay; updateCaption()
         }, for: .touchUpInside)
 
         // Start the render loop once the view is laid out.

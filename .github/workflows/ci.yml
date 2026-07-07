@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - "codex/**"
+      - "codex-*"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    name: Android and shared tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+        working-directory: kotlin
+
+      - name: Test renderer and assemble Android app
+        run: ./gradlew :renderer:testDebugUnitTest :androidApp:assembleDebug --stacktrace
+        working-directory: kotlin
+
+  ios:
+    name: iOS simulator build
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+        working-directory: kotlin
+
+      - name: Build Kotlin iOS frameworks
+        run: ./gradlew :renderer:linkDebugFrameworkIosSimulatorArm64 :renderer:linkDebugFrameworkIosArm64 --stacktrace
+        working-directory: kotlin
+
+      - name: Build iOS simulator app
+        run: >
+          xcodebuild
+          -project iosApp/MilkyWayKMP.xcodeproj
+          -scheme MilkyWayKMP
+          -configuration Debug
+          -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          ARCHS=arm64
+          ONLY_ACTIVE_ARCH=YES
+          CODE_SIGNING_ALLOWED=NO
+          build
+        working-directory: kotlin

@@ -53,9 +53,6 @@ object MilkyWayConventions {
     val WARP_LINE_OF_NODES_RAD = BAR_ANGLE_RAD
     const val SUN_GALACTOCENTRIC_RADIUS_KPC = 8.2
     val SUN_AZIMUTH_OFFSET_FROM_BAR_RAD = degToRad(30.0)
-    const val HAB_ZONE_INNER_KPC = 6.5f
-    const val HAB_ZONE_OUTER_KPC = 9.8f
-    const val BAR_HALF_LENGTH_KPC = 5.0f
 
     // ---- Gesture phases (the only thing that crosses to platform glue) ----
     const val PHASE_BEGAN = 0

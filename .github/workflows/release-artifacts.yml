@@ -1,0 +1,82 @@
+name: Release Artifacts
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: release-artifacts-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-artifacts:
+    name: Build mobile artifacts
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+        working-directory: kotlin
+
+      - name: Build Android debug APK
+        run: ./gradlew :androidApp:assembleDebug --stacktrace
+        working-directory: kotlin
+
+      - name: Build Kotlin iOS frameworks
+        run: ./gradlew :renderer:linkDebugFrameworkIosSimulatorArm64 :renderer:linkDebugFrameworkIosArm64 --stacktrace
+        working-directory: kotlin
+
+      - name: Build iOS simulator app
+        run: >
+          xcodebuild
+          -project iosApp/MilkyWayKMP.xcodeproj
+          -scheme MilkyWayKMP
+          -configuration Debug
+          -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath build/XcodeDerivedData
+          ARCHS=arm64
+          ONLY_ACTIVE_ARCH=YES
+          CODE_SIGNING_ALLOWED=NO
+          build
+        working-directory: kotlin
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-debug-apk
+          path: kotlin/androidApp/build/outputs/apk/debug/androidApp-debug.apk
+          if-no-files-found: error
+
+      - name: Upload iOS simulator app
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-simulator-app
+          path: kotlin/build/XcodeDerivedData/Build/Products/Debug-iphonesimulator/MilkyWayKMP.app
+          if-no-files-found: error
+
+      - name: Upload Kotlin iOS frameworks
+        uses: actions/upload-artifact@v4
+        with:
+          name: kotlin-ios-frameworks
+          path: |
+            kotlin/renderer/build/bin/iosSimulatorArm64/debugFramework/MilkyWayRenderer.framework
+            kotlin/renderer/build/bin/iosArm64/debugFramework/MilkyWayRenderer.framework
+          if-no-files-found: error
