@@ -35,9 +35,6 @@ class GlIos : Gl {
     override fun bindBuffer(target: Int, b: Int) = mwgl_bind_buffer(target, b)
     override fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int) =
         mwgl_vertex_attrib_pointer(index, size, type, if (normalized) 1 else 0, stride, offset)
-    override fun vertexAttribPointerDirect(index: Int, size: Int, data: FloatArray, stride: Int, offset: Int) {
-        data.usePinned { mwgl_vertex_attrib_pointer_floats(index, size, it.addressOf(0), stride, offset) }
-    }
     override fun enableVertexAttribArray(index: Int) = mwgl_enable_vertex_attrib_array(index)
     override fun disableVertexAttribArray(index: Int) = mwgl_disable_vertex_attrib_array(index)
 

@@ -48,6 +48,9 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: de.hanno-rein.milkyway-kmp
         INFOPLIST_GENERATION: YES
         GENERATE_INFOPLIST_FILE: YES
+        # Without a launch-screen key iOS runs the app in legacy iPad
+        # compatibility mode: 768x1024pt letterbox, scaled to the screen.
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_VERSION: "5.0"
         VALIDATE_WORKSPACE: NO

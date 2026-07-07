@@ -72,7 +72,9 @@ kotlin {
     }
 
     // Export an iOS framework so the Xcode app can link against it.
-    iosX64().binaries.framework { baseName = "MilkyWayRenderer" }
-    iosArm64().binaries.framework { baseName = "MilkyWayRenderer" }
-    iosSimulatorArm64().binaries.framework { baseName = "MilkyWayRenderer" }
+    // bundleId override: the default derives from the package (de.hanno_rein.mw),
+    // and underscores fail Xcode's CFBundleIdentifier validation.
+    iosX64().binaries.framework { baseName = "MilkyWayRenderer"; binaryOption("bundleId", "de.hanno-rein.mw.MilkyWayRenderer") }
+    iosArm64().binaries.framework { baseName = "MilkyWayRenderer"; binaryOption("bundleId", "de.hanno-rein.mw.MilkyWayRenderer") }
+    iosSimulatorArm64().binaries.framework { baseName = "MilkyWayRenderer"; binaryOption("bundleId", "de.hanno-rein.mw.MilkyWayRenderer") }
 }

@@ -32,7 +32,6 @@ interface Gl {
     fun bufferData(target: Int, data: FloatArray, usage: Int)
     fun bindBuffer(target: Int, b: Int)
     fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int)
-    fun vertexAttribPointerDirect(index: Int, size: Int, data: FloatArray, stride: Int = size * 4, offset: Int = 0)
     fun enableVertexAttribArray(index: Int)
     fun disableVertexAttribArray(index: Int)
 

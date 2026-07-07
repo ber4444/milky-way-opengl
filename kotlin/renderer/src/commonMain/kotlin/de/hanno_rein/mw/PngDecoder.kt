@@ -8,7 +8,13 @@ package de.hanno_rein.mw
  * [decodePng]. This replaces stb_image; the renderer never touches a PNG library
  * directly.
  */
-class PngResult(val rgba: ByteArray, val w: Int, val h: Int, val n: Int)
+class PngResult(
+    val rgba: ByteArray, val w: Int, val h: Int, val n: Int,
+    /** True when the decoder already multiplied RGB by alpha (iOS CGBitmapContext
+     *  only offers premultiplied output). uploadPng must not premultiply again —
+     *  doing so squares the alpha factor and visibly darkens translucent pixels. */
+    val premultiplied: Boolean = false,
+)
 
 /** Platform-native PNG decode → RGBA. expect: androidMain/iosMain provide actuals. */
 expect fun decodePng(data: ByteArray): PngResult
