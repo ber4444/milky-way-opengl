@@ -36,9 +36,7 @@ jobs:
           - language: java-kotlin
             build-mode: manual
             runner: ubuntu-latest
-          - language: swift
-            build-mode: manual
-            runner: macos-latest
+
 
     steps:
       - name: Check out repository
