@@ -1,0 +1,139 @@
+name: CodeQL
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - "codex/**"
+      - "codex-*"
+  schedule:
+    - cron: "34 3 * * 1"
+
+concurrency:
+  group: codeql-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+            runner: ubuntu-latest
+          - language: java-kotlin
+            build-mode: manual
+            runner: ubuntu-latest
+
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        if: matrix.language == 'java-kotlin' || matrix.language == 'swift'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        if: matrix.language == 'java-kotlin' || matrix.language == 'swift'
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        if: matrix.language == 'java-kotlin' || matrix.language == 'swift'
+        run: chmod +x gradlew
+        working-directory: kotlin
+
+      - name: Install xcodegen
+        if: matrix.language == 'swift'
+        run: brew install xcodegen
+
+      - name: Fetch MetalANGLE framework
+        if: matrix.language == 'swift'
+        run: |
+          VERSION="gles3-0.0.8"
+          BASE="https://github.com/kakashidinho/metalangle/releases/download/${VERSION}"
+          mkdir -p third_party/metalangle/ios-sim third_party/metalangle/ios-device
+          curl -fSL -o /tmp/ma_sim.zip "${BASE}/MetalANGLE.framework.ios.simulator.zip"
+          curl -fSL -o /tmp/ma_dev.zip "${BASE}/MetalANGLE.framework.ios.zip"
+          unzip -q -o /tmp/ma_sim.zip -d third_party/metalangle/ios-sim
+          unzip -q -o /tmp/ma_dev.zip -d third_party/metalangle/ios-device
+          mkdir -p third_party/metalangle/ios-sim/MetalANGLE.framework/Modules
+          cat > third_party/metalangle/ios-sim/MetalANGLE.framework/Modules/module.modulemap <<'MM'
+          framework module MetalANGLE {
+            umbrella header "MGLKit.h"
+            export *
+            module * { export * }
+          }
+          MM
+
+      - name: Initialize CodeQL
+        if: matrix.language != 'swift'
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - name: Build Kotlin sources
+        if: matrix.language == 'java-kotlin'
+        run: ./gradlew :renderer:testDebugUnitTest :androidApp:assembleDebug --stacktrace
+        working-directory: kotlin
+
+      - name: Build Kotlin iOS frameworks
+        if: matrix.language == 'swift'
+        run: ./gradlew :renderer:linkDebugFrameworkIosSimulatorArm64 :renderer:linkDebugFrameworkIosArm64 --stacktrace
+        working-directory: kotlin
+
+      - name: Fix framework bundle identifiers
+        if: matrix.language == 'swift'
+        run: |
+          for fw in renderer/build/bin/iosSimulatorArm64/debugFramework/MilkyWayRenderer.framework renderer/build/bin/iosArm64/debugFramework/MilkyWayRenderer.framework; do
+            /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier de.hanno-rein.mw.MilkyWayRenderer" "$fw/Info.plist" 2>/dev/null || true
+          done
+        working-directory: kotlin
+
+      - name: Initialize CodeQL
+        if: matrix.language == 'swift'
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - name: Build Swift host app
+        if: matrix.language == 'swift'
+        run: |
+          cd iosApp
+          xcodegen generate
+          xcodebuild \
+            -project MilkyWayKMP.xcodeproj \
+            -scheme MilkyWayKMP \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath ../build/XcodeDerivedData \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=YES \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+        working-directory: kotlin
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"
