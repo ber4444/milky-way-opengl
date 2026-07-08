@@ -1,0 +1,13 @@
+name: Milky Way CodeQL config
+
+queries:
+  - uses: security-extended
+
+paths:
+  - .github/workflows
+  - kotlin
+
+paths-ignore:
+  - "**/build/**"
+  - "**/.gradle/**"
+  - third_party/**
